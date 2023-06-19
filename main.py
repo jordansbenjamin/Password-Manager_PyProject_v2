@@ -52,16 +52,21 @@ def save():
         is_ok = messagebox.askokcancel(title=data_lst[0], message=f"These are the details entered: \nEmail: {data_lst[1]}" f"\nPassword: {data_lst[2]} \nIs it ok to save?")
 
         if is_ok:
-            with open("data.json", 'r') as jsonf:
-                # Reading old data
-                data = json.load(jsonf)
+            try:
+                with open("data.json", 'r') as jsonf:
+                    # Reading old data
+                    data = json.load(jsonf)
+            except FileNotFoundError:
+                print("JSON file not found, creating one now...")
+                with open("data.json", 'w') as jsonf:
+                    json.dump(new_data, jsonf, indent=4)
+            else:
                 # Updating old data with new data
                 data.update(new_data)
-
-            with open("data.json", 'w') as jsonf:
-                # Saving the updated data
-                json.dump(data, jsonf, indent=4)
-                
+                with open("data.json", 'w') as jsonf:
+                    # Saving the updated data
+                    json.dump(data, jsonf, indent=4)
+            finally:
                 web_input.delete(0, END)
                 email_input.delete(0, END)
                 # email_input.insert(0, "name@email.com")
@@ -83,8 +88,8 @@ canvas.grid(column=1, row=0)
 web_label = Label(text="Website:", font=FONT)
 web_label.grid(column=0, row=1)
 # Website input
-web_input = Entry(width=35)
-web_input.grid(column=1, row=1, columnspan=2, sticky="EW")
+web_input = Entry(width=21)
+web_input.grid(column=1, row=1, sticky="EW")
 web_input.focus()
 
 
@@ -111,5 +116,9 @@ generate_pw_btn.grid(column=2, row=3, sticky="EW")
 # Add button
 add_btn = Button(text="Add", width=36, command=save)
 add_btn.grid(column=1, row=4, columnspan=2, sticky="EW")
+
+# Search button
+search_btn = Button(text="Search", width=15)
+search_btn.grid(column=2, row=1)
 
 window.mainloop()
