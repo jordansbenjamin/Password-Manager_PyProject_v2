@@ -38,7 +38,13 @@ def generate_password():
 def save():
     data_lst = [web_input.get(), email_input.get(), passw_input.get()]
     data_lst.append("\n")
-    data = " | ".join(str(value) for value in data_lst)
+    # data = " | ".join(str(value) for value in data_lst)
+    new_data = {
+        data_lst[0]: {
+            "email": data_lst[1],
+            "password": data_lst[2],
+        }
+    }
     
     if len(data_lst[0]) == 0 or len(data_lst[1]) == 0 or len(data_lst[2]) == 0:
         messagebox.askretrycancel(title="Oops", message="Please don't leave any fields empty")
@@ -46,8 +52,16 @@ def save():
         is_ok = messagebox.askokcancel(title=data_lst[0], message=f"These are the details entered: \nEmail: {data_lst[1]}" f"\nPassword: {data_lst[2]} \nIs it ok to save?")
 
         if is_ok:
-            with open("data.txt", 'a') as df:
-                df.write(data)
+            with open("data.json", 'r') as jsonf:
+                # Reading old data
+                data = json.load(jsonf)
+                # Updating old data with new data
+                data.update(new_data)
+
+            with open("data.json", 'w') as jsonf:
+                # Saving the updated data
+                json.dump(data, jsonf, indent=4)
+                
                 web_input.delete(0, END)
                 email_input.delete(0, END)
                 # email_input.insert(0, "name@email.com")
